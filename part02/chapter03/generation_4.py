@@ -1,41 +1,60 @@
 import os
-
 from dotenv import load_dotenv
-from langchain import LLMMathChain, SerpAPIWrapper
-from langchain.agents.tools import Tool
-from langchain.chat_models import ChatOpenAI
-from langchain.experimental.plan_and_execute import (
-    PlanAndExecute,
-    load_agent_executor,
-    load_chat_planner,
-)
-from langchain.llms import OpenAI
 
+from langchain.chains import LLMMathChain
+from langchain_community.utilities import SerpAPIWrapper
+from langchain.tools import Tool
+from langchain_community.chat_models import ChatOpenAI
+from langchain.llms import OpenAI
+from langchain.agents import initialize_agent, AgentType
+
+# .env에서 API 키 불러오기
 load_dotenv()
 
-# https://serpapi.com/manage-api-key
-# pip install google-search-results or poetry add google-search-results
+# ----------------------------
+# LLM 및 도구 설정
+# ----------------------------
 llm = OpenAI(temperature=0)
+
+# 수학 계산용 체인
 llm_math_chain = LLMMathChain.from_llm(llm=llm, verbose=True)
+
+# SerpAPI 검색 도구
 search = SerpAPIWrapper(serpapi_api_key=os.getenv("SERPAPI_API_KEY"))
+
+# Tools 목록 정의
 tools = [
     Tool(
         name="Search",
         func=search.run,
-        description="useful for when you need to answer questions about current events",
+        description="Useful for when you need to answer questions about current events"
     ),
     Tool(
         name="Calculator",
         func=llm_math_chain.run,
-        description="useful for when you need to answer questions about math",
+        description="Useful for when you need to answer questions about math"
     ),
 ]
 
+# ----------------------------
+# Agent 생성
+# ----------------------------
+# ChatOpenAI 모델 설정
 model = ChatOpenAI(temperature=0)
-planner = load_chat_planner(model)
-executor = load_agent_executor(model, tools, verbose=True)
-agent = PlanAndExecute(planner=planner, executor=executor, verbose=True)
 
-agent.run(
+# Agent 초기화
+agent = initialize_agent(
+    tools,
+    model,
+    agent_type=AgentType.ZERO_SHOT_REACT_DESCRIPTION,
+    verbose=True
+)
+
+# ----------------------------
+# Agent 실행
+# ----------------------------
+response = agent.run(
     "Who is Leo DiCaprio's girlfriend? What is her current age raised to the 0.43 power?"
 )
+
+print(response)
