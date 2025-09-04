@@ -14,9 +14,9 @@
     "gitlens.codeLens.symbolScopes": [
       "!Module"
     ],
-    "editor.wordBasedSuggestions": false,
+    "editor.wordBasedSuggestions": "off",
     "editor.codeActionsOnSave": {
-      "source.organizeImports": true, //isort
+      "source.organizeImports": "explicit"
     },
     "editor.defaultFormatter": "ms-python.black-formatter"
   }
