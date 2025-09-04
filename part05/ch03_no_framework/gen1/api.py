@@ -25,14 +25,13 @@ def read_prompt_template(file_path: str) -> str:
 
     return prompt_template
 
-
 def request_gpt_api(
     prompt: str,
     model: str = "gpt-3.5-turbo",
     max_token: int = 500,
     temperature: float = 0.8,
 ) -> str:
-    response = openai.ChatCompletion.create(
+    response = openai.chat.completions.create(
         model=model,
         messages=[{"role": "user", "content": prompt}],
         max_tokens=max_token,
@@ -56,6 +55,8 @@ def generate_novel(req: UserRequest) -> Dict[str, str]:
 
 
 if __name__ == "__main__":
+    # prompt_template = read_prompt_template("prompt_template.txt")
+    # print(request_gpt_api(prompt_template, model="gpt-4", max_token=1000))
     import uvicorn
 
     uvicorn.run(app, host="0.0.0.0", port=8000)

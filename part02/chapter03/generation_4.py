@@ -5,7 +5,7 @@ from langchain.chains import LLMMathChain
 from langchain_community.utilities import SerpAPIWrapper
 from langchain.tools import Tool
 from langchain_community.chat_models import ChatOpenAI
-from langchain.llms import OpenAI
+from langchain_community.llms import OpenAI
 from langchain.agents import initialize_agent, AgentType
 
 # .env에서 API 키 불러오기
